@@ -4,7 +4,15 @@ import ericdiaz.program.gotennachallenge.api.RetrofitServiceGenerator;
 import ericdiaz.program.gotennachallenge.model.Place;
 import io.reactivex.Single;
 
-public class PlacesRepository implements BaseRepository{
+/**
+ * A repository for conducting network calls
+ * <p>
+ * Created 8/13/19
+ *
+ * @author Eric Diaz
+ */
+
+public class PlacesNetworkRepository implements BaseNetworkRepository {
 
     @Override
     public Single<Place[]> getPlace() {
