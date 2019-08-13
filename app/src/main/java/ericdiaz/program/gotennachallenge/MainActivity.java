@@ -2,14 +2,11 @@ package ericdiaz.program.gotennachallenge;
 
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.maps.MapView;
-import com.mapbox.mapboxsdk.maps.MapboxMap;
-import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
 
 import ericdiaz.program.gotennachallenge.utils.MapBoxUtils;
@@ -26,17 +23,11 @@ public class MainActivity extends AppCompatActivity {
 
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
-        mapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(@NonNull MapboxMap mapboxMap) {
-                mapboxMap.setStyle(Style.MAPBOX_STREETS, new Style.OnStyleLoaded() {
-                    @Override
-                    public void onStyleLoaded(@NonNull Style style) {
+        mapView.getMapAsync(mapboxMap ->
+          mapboxMap.setStyle(Style.MAPBOX_STREETS,
+            style -> {
 
-                    }
-                });
-            }
-        });
+            }));
     }
 
     @Override
