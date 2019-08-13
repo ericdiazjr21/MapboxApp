@@ -13,11 +13,21 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.0.2'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
-    //MapBox gor map feature
+    //MapBox for map feature
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:8.2.1'
-
 
     //Retrofit for network service
     implementation 'com.squareup.retrofit2:retrofit:2.6.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.0'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.6.0'
+
+    //RxJava for functionality
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.10'
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+
+    //Testing frameworks
+    testImplementation 'junit:junit:4.12'
+
+
+
 }

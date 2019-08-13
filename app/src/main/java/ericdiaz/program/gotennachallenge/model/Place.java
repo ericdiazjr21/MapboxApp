@@ -2,7 +2,7 @@ package ericdiaz.program.gotennachallenge.model;
 
 import androidx.annotation.NonNull;
 
-public final class Places {
+public final class Place {
 
     private final int id;
     private final String name;
@@ -11,11 +11,11 @@ public final class Places {
     private final String description;
 
 
-    public Places(final int id,
-                  @NonNull final String name,
-                  final double latitude,
-                  final double longitude,
-                  @NonNull final String description) {
+    public Place(final int id,
+                 @NonNull final String name,
+                 final double latitude,
+                 final double longitude,
+                 @NonNull final String description) {
         this.id = id;
         this.name = name;
         this.latitude = latitude;
