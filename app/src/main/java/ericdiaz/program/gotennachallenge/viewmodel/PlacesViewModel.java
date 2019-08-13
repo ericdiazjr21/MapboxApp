@@ -8,7 +8,7 @@ import ericdiaz.program.gotennachallenge.repository.PlacesNetworkRepository;
 import io.reactivex.Single;
 
 /**
- * A ViewModel that is lifecycle-aware for maneging data
+ * A ViewModel that is lifecycle-aware for maneging places data
  *
  * Created: 8/13/19
  *
