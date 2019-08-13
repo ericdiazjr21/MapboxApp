@@ -12,6 +12,8 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
 import com.mapbox.mapboxsdk.maps.Style;
 
+import ericdiaz.program.gotennachallenge.utils.MapBoxUtils;
+
 public class MainActivity extends AppCompatActivity {
 
     private MapView mapView;
@@ -19,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Mapbox.getInstance(this, "pk.eyJ1IjoiZXJpY2RpYXoiLCJhIjoiY2p6OThqZzJiMDRxaDNkcGo0Y3E4Z3M3ZyJ9.X9WoMdw49Am8iQSUdVWL4w");
+        Mapbox.getInstance(this, MapBoxUtils.ACCESS_KEY);
         setContentView(R.layout.activity_main);
 
         mapView = findViewById(R.id.mapView);
