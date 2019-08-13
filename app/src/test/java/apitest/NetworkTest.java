@@ -8,7 +8,6 @@ import ericdiaz.program.gotennachallenge.api.PlacesService;
 import ericdiaz.program.gotennachallenge.api.RetrofitServiceGenerator;
 import ericdiaz.program.gotennachallenge.model.Place;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Predicate;
 import io.reactivex.observers.TestObserver;
 
 /**
@@ -42,12 +41,7 @@ public class NetworkTest {
         try {
             compositeDisposable.add(testObserver
               .await()
-              .assertValue(new Predicate<Place[]>() {
-                  @Override
-                  public boolean test(Place[] places) throws Exception {
-                      return places[0].getName().equals(verifiedPlaceName);
-                  }
-              }));
+              .assertValue(places -> places[0].getName().equals(verifiedPlaceName)));
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
