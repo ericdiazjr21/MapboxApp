@@ -12,13 +12,12 @@ import java.util.List;
 
 import ericdiaz.program.gotennachallenge.model.Place;
 
-public class PlacesDatabase extends SQLiteOpenHelper {
+public class PlacesDatabase extends SQLiteOpenHelper implements BaseDatabase {
 
     private static final String DATABASE_NAME = "PlacesDatabase.db";
     private static final String TABLE_NAME = "TransactionTable";
     private static final int SCHEMA = 1;
     private static PlacesDatabase singleDatabaseInstance;
-    private SQLiteDatabase db;
 
     private PlacesDatabase(@NonNull final Context context) {
         super(context, DATABASE_NAME, null, SCHEMA);
@@ -43,12 +42,20 @@ public class PlacesDatabase extends SQLiteOpenHelper {
           ");");
     }
 
+    @Override
+    public boolean isDatabaseEmpty() {
+        Cursor cursor = getReadableDatabase().rawQuery(
+          "SELECT * FROM " + TABLE_NAME, null);
+        return cursor == null;
+    }
+
+    @Override
     public void insertPlace(@NonNull final Place place) {
         Cursor cursor = getReadableDatabase().rawQuery(
           "SELECT * FROM " + TABLE_NAME +
             " WHERE _id = '" + place.getId(),
           null);
-        if (cursor.getCount() == 0) {
+        if (cursor == null) {
             getWritableDatabase().execSQL("INSERT INTO " + TABLE_NAME +
               "(_id, name, latitude, longitude, description) " +
               "VALUES('" +
@@ -62,6 +69,7 @@ public class PlacesDatabase extends SQLiteOpenHelper {
         cursor.close();
     }
 
+    @Override
     public List<Place> getAllPlaces() {
         List<Place> allPlaces = new ArrayList<>();
         Cursor cursor = getReadableDatabase().rawQuery(
@@ -84,9 +92,14 @@ public class PlacesDatabase extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onOpen(SQLiteDatabase db) {
-        this.db = db;
-        super.onOpen(db);
+    public void deletePlace(@NonNull Place place) {
+        Cursor cursor = getReadableDatabase().rawQuery(
+          "SELECT * FROM " + TABLE_NAME +
+            " WHERE _id = '" + place.getId(), null);
+        if (cursor != null) {
+            getWritableDatabase().execSQL("DELETE * FROM " + TABLE_NAME +
+              " WHERE _id = '" + place.getId());
+        }
     }
 
     @Override
