@@ -10,7 +10,7 @@ import ericdiaz.program.gotennachallenge.db.BaseDatabase;
 import ericdiaz.program.gotennachallenge.db.PlacesDatabase;
 import ericdiaz.program.gotennachallenge.model.Place;
 
-public class PlacesDatabaseRepository implements BaseDatabaseRepository {
+public final class PlacesDatabaseRepository implements BaseDatabaseRepository {
 
     private final BaseDatabase placesDatabase;
 

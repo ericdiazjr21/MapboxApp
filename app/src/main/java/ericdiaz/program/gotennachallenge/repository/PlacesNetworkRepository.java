@@ -12,7 +12,7 @@ import io.reactivex.Single;
  * @author Eric Diaz
  */
 
-public class PlacesNetworkRepository implements BaseNetworkRepository {
+public final class PlacesNetworkRepository implements BaseNetworkRepository {
 
     @Override
     public Single<Place[]> getPlace() {

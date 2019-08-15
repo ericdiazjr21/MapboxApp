@@ -12,7 +12,7 @@ import java.util.List;
 
 import ericdiaz.program.gotennachallenge.model.Place;
 
-public class PlacesDatabase extends SQLiteOpenHelper implements BaseDatabase {
+public final class PlacesDatabase extends SQLiteOpenHelper implements BaseDatabase {
 
     private static final String DATABASE_NAME = "PlacesDatabase.db";
     private static final String TABLE_NAME = "TransactionTable";
