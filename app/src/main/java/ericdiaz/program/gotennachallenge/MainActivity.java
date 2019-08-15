@@ -16,14 +16,18 @@ import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 
+import ericdiaz.program.gotennachallenge.model.Place;
 import ericdiaz.program.gotennachallenge.utils.MapBoxUtils;
 import ericdiaz.program.gotennachallenge.viewmodel.BaseViewModel;
 import ericdiaz.program.gotennachallenge.viewmodel.PlacesViewModel;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 
 public class MainActivity extends AppCompatActivity {
 
     private MapView mapView;
     private BaseViewModel placesViewModel;
+    private Disposable disposable;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     public void onPause() {
         super.onPause();
         mapView.onPause();
+        disposable.dispose();
     }
 
     @Override
@@ -82,29 +87,44 @@ public class MainActivity extends AppCompatActivity {
         mapView.getMapAsync(mapboxMap ->
           mapboxMap.setStyle(Style.MAPBOX_STREETS,
             style -> {
-                addIconToStyle(style, "tempName");
-                addLatLngPositionToStyle(style, "tempSourceId", 40.73581, -73.99155);
-                addSymbolLayerToStyle(style, "layer-id", "source-id", "marker-icon-id");
+                addIconToStyle(style);
+
+                disposable = placesViewModel
+                  .getPlacesData()
+                  .observeOn(AndroidSchedulers.mainThread())
+                  .subscribe(places -> {
+                      for (Place place : places) {
+                          String iD = String.valueOf(place.getId());
+
+                          addGeoJsonSourceToStyle(style, iD, place.getLongitude(), place.getLatitude());
+
+                          addSymbolLayerToStyle(style, iD);
+                      }
+                  }, throwable -> {
+                      //TODO: Display error message
+                  });
+
+
             }));
     }
 
-    private void addSymbolLayerToStyle(Style style, String layerId, String sourceId, String markerIconId) {
-        SymbolLayer symbolLayer = new SymbolLayer(layerId, sourceId);
-        symbolLayer.withProperties(
-          PropertyFactory.iconImage(markerIconId)
-        );
-        style.addLayer(symbolLayer);
+    private void addIconToStyle(Style style) {
+        style.addImage(MapBoxUtils.ICON_NAME,
+          BitmapFactory.decodeResource(
+            MainActivity.this.getResources(), R.drawable.mapbox_marker_icon_default));
     }
 
-    private void addLatLngPositionToStyle(Style style, String sourceId, double latitude, double longitude) {
-        GeoJsonSource geoJsonSource = new GeoJsonSource(sourceId, Feature.fromGeometry(
+    private void addGeoJsonSourceToStyle(Style style, String iD, double longitude, double latitude) {
+        GeoJsonSource geoJsonSource = new GeoJsonSource(MapBoxUtils.getSourceId(iD), Feature.fromGeometry(
           Point.fromLngLat(longitude, latitude)));
         style.addSource(geoJsonSource);
     }
 
-    private void addIconToStyle(Style style, String name) {
-        style.addImage(name,
-          BitmapFactory.decodeResource(
-            MainActivity.this.getResources(), R.drawable.mapbox_marker_icon_default));
+    private void addSymbolLayerToStyle(Style style, String iD) {
+        SymbolLayer symbolLayer = new SymbolLayer(MapBoxUtils.getLayerId(iD), MapBoxUtils.getSourceId(iD));
+        symbolLayer.withProperties(
+          PropertyFactory.iconImage(MapBoxUtils.ICON_NAME)
+        );
+        style.addLayer(symbolLayer);
     }
 }
