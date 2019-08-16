@@ -9,6 +9,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.geojson.Feature;
@@ -31,6 +33,7 @@ import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 import ericdiaz.program.gotennachallenge.R;
 import ericdiaz.program.gotennachallenge.model.Place;
 import ericdiaz.program.gotennachallenge.utils.MapBoxUtils;
+import ericdiaz.program.gotennachallenge.view.recyclerview.PlacesAdapter;
 import ericdiaz.program.gotennachallenge.viewmodel.BaseViewModel;
 import ericdiaz.program.gotennachallenge.viewmodel.PlacesViewModel;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -43,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     private Disposable disposable;
     private MapboxMap mapboxMap;
     private LocationComponent locationComponent;
+    private RecyclerView placesRecyclerView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         initMapBoxView(savedInstanceState);
         placesViewModel = new ViewModelProvider.AndroidViewModelFactory(getApplication()).create(PlacesViewModel.class);
+        placesRecyclerView = findViewById(R.id.place_recycler_view);
+        placesRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
     }
 
     @Override
@@ -110,6 +116,10 @@ public class MainActivity extends AppCompatActivity {
                   .getPlacesData()
                   .observeOn(AndroidSchedulers.mainThread())
                   .subscribe(places -> {
+                      PlacesAdapter adapter = new PlacesAdapter();
+                      adapter.setData(places);
+                      placesRecyclerView.setAdapter(adapter);
+
                       for (Place place : places) {
                           Log.d("Main", "initMapBoxView: " + place.getLatitude() + " " + place.getLongitude());
                           String iD = String.valueOf(place.getId());
