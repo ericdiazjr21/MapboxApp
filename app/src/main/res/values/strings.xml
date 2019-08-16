@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">goTennaChallenge</string>
+    <string name="user_location_permission_explanation">We Need IT!</string>
+    <string name="user_location_permission_not_granted">Permission Denied!</string>
 </resources>
