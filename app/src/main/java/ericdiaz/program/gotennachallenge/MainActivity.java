@@ -24,7 +24,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 
 public class MainActivity extends AppCompatActivity {
-
     private MapView mapView;
     private BaseViewModel placesViewModel;
     private Disposable disposable;
@@ -35,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         Mapbox.getInstance(this, MapBoxUtils.ACCESS_KEY);
         setContentView(R.layout.activity_main);
         initMapBoxView(savedInstanceState);
-        placesViewModel = new ViewModelProvider.NewInstanceFactory().create(PlacesViewModel.class);
+        placesViewModel = new ViewModelProvider.AndroidViewModelFactory(getApplication()).create(PlacesViewModel.class);
     }
 
     @Override
@@ -101,7 +100,6 @@ public class MainActivity extends AppCompatActivity {
                           addSymbolLayerToStyle(style, iD);
                       }
                   }, throwable -> {
-                      //TODO: Display error message
                   });
 
 

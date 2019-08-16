@@ -4,8 +4,6 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import java.util.List;
-
 import ericdiaz.program.gotennachallenge.db.BaseDatabase;
 import ericdiaz.program.gotennachallenge.db.PlacesDatabase;
 import ericdiaz.program.gotennachallenge.model.Place;
@@ -19,8 +17,8 @@ public final class PlacesDatabaseRepository implements BaseDatabaseRepository {
     }
 
     @Override
-    public boolean isDatabaseEmpty() {
-        return placesDatabase.isDatabaseEmpty();
+    public boolean isEmpty() {
+        return placesDatabase.isEmpty();
     }
 
     @Override
@@ -29,7 +27,7 @@ public final class PlacesDatabaseRepository implements BaseDatabaseRepository {
     }
 
     @Override
-    public List<Place> getAllPlaces() {
+    public Place[] getAllPlaces() {
         return placesDatabase.getAllPlaces();
     }
 

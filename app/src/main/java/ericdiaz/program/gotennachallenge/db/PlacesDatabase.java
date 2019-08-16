@@ -7,15 +7,11 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.NonNull;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import ericdiaz.program.gotennachallenge.model.Place;
 
 public final class PlacesDatabase extends SQLiteOpenHelper implements BaseDatabase {
-
     private static final String DATABASE_NAME = "PlacesDatabase.db";
-    private static final String TABLE_NAME = "TransactionTable";
+    private static final String TABLE_NAME = "PlacesTable";
     private static final int SCHEMA = 1;
     private static PlacesDatabase singleDatabaseInstance;
 
@@ -43,19 +39,19 @@ public final class PlacesDatabase extends SQLiteOpenHelper implements BaseDataba
     }
 
     @Override
-    public boolean isDatabaseEmpty() {
+    public boolean isEmpty() {
         Cursor cursor = getReadableDatabase().rawQuery(
           "SELECT * FROM " + TABLE_NAME, null);
-        return cursor == null;
+        return cursor.getCount() == 0;
     }
 
     @Override
     public void insertPlace(@NonNull final Place place) {
         Cursor cursor = getReadableDatabase().rawQuery(
           "SELECT * FROM " + TABLE_NAME +
-            " WHERE _id = '" + place.getId(),
+            " WHERE _id = '" + place.getId() + "';",
           null);
-        if (cursor == null) {
+        if (cursor.getCount() == 0) {
             getWritableDatabase().execSQL("INSERT INTO " + TABLE_NAME +
               "(_id, name, latitude, longitude, description) " +
               "VALUES('" +
@@ -63,32 +59,33 @@ public final class PlacesDatabase extends SQLiteOpenHelper implements BaseDataba
               place.getName() + "', '" +
               place.getLatitude() + "', '" +
               place.getLongitude() + "', '" +
-              place.getDescription() + "', '" +
-              "');");
+              place.getDescription() + "');");
         }
         cursor.close();
     }
 
     @Override
-    public List<Place> getAllPlaces() {
-        List<Place> allPlaces = new ArrayList<>();
+    public Place[] getAllPlaces() {
         Cursor cursor = getReadableDatabase().rawQuery(
           "SELECT * FROM " + TABLE_NAME + ";", null);
+        Place[] placesArray = cursor != null ? new Place[cursor.getCount()] : null;
+        int index = 0;
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 do {
-                    allPlaces.add(new Place(
+                    placesArray[index] = (new Place(
                       cursor.getInt(cursor.getColumnIndex("_id")),
                       cursor.getString(cursor.getColumnIndex("name")),
                       cursor.getDouble(cursor.getColumnIndex("latitude")),
                       cursor.getDouble(cursor.getColumnIndex("longitude")),
                       cursor.getString(cursor.getColumnIndex("description"))
                     ));
+                    index++;
                 } while (cursor.moveToNext());
             }
             cursor.close();
         }
-        return allPlaces;
+        return placesArray;
     }
 
     @Override
