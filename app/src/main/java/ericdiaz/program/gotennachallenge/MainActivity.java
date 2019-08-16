@@ -4,14 +4,12 @@ import android.annotation.SuppressLint;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.Point;
@@ -30,8 +28,6 @@ import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 
-import java.util.List;
-
 import ericdiaz.program.gotennachallenge.model.Place;
 import ericdiaz.program.gotennachallenge.utils.MapBoxUtils;
 import ericdiaz.program.gotennachallenge.viewmodel.BaseViewModel;
@@ -39,10 +35,9 @@ import ericdiaz.program.gotennachallenge.viewmodel.PlacesViewModel;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 
-public class MainActivity extends AppCompatActivity implements PermissionsListener {
+public class MainActivity extends AppCompatActivity {
 
     private MapView mapView;
-    private PermissionsManager permissionsManager;
     private BaseViewModel placesViewModel;
     private Disposable disposable;
     private MapboxMap mapboxMap;
@@ -172,33 +167,6 @@ public class MainActivity extends AppCompatActivity implements PermissionsListen
             locationComponent.setLocationComponentEnabled(true);
             locationComponent.setCameraMode(CameraMode.TRACKING);
             locationComponent.setRenderMode(RenderMode.COMPASS);
-        }
-    }
-
-    private void requestLocationPermission() {
-        if (!PermissionsManager.areLocationPermissionsGranted(this)) {
-            permissionsManager = new PermissionsManager(this);
-            permissionsManager.requestLocationPermissions(this);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
-    }
-
-    @Override
-    public void onExplanationNeeded(List<String> permissionsToExplain) {
-        Toast.makeText(this, R.string.user_location_permission_explanation, Toast.LENGTH_LONG).show();
-    }
-
-    @Override
-    public void onPermissionResult(boolean granted) {
-        if (granted) {
-            mapboxMap.getStyle(this::enableLocationComponent);
-        } else {
-            Toast.makeText(this, R.string.user_location_permission_not_granted, Toast.LENGTH_LONG).show();
-            finish();
         }
     }
 }
