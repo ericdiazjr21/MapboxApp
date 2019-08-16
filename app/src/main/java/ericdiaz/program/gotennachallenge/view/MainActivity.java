@@ -1,4 +1,4 @@
-package ericdiaz.program.gotennachallenge;
+package ericdiaz.program.gotennachallenge.view;
 
 import android.annotation.SuppressLint;
 import android.graphics.BitmapFactory;
@@ -28,6 +28,7 @@ import com.mapbox.mapboxsdk.style.layers.PropertyFactory;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 
+import ericdiaz.program.gotennachallenge.R;
 import ericdiaz.program.gotennachallenge.model.Place;
 import ericdiaz.program.gotennachallenge.utils.MapBoxUtils;
 import ericdiaz.program.gotennachallenge.viewmodel.BaseViewModel;

@@ -1,4 +1,4 @@
-package ericdiaz.program.gotennachallenge;
+package ericdiaz.program.gotennachallenge.view;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,6 +12,8 @@ import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 
 import java.util.List;
+
+import ericdiaz.program.gotennachallenge.R;
 
 public class SplashActivity extends AppCompatActivity implements PermissionsListener {
 
