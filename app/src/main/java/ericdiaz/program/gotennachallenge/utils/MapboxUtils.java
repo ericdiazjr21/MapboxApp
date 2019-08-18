@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
  * @author Eric Diaz
  */
 
-public final class MapBoxUtils {
+public final class MapboxUtils {
 
     public static final String ACCESS_KEY = "pk.eyJ1IjoiZXJpY2RpYXoiLCJhIjoiY2p6OThqZzJiMDRxaDNkcGo0Y3E4Z3M3ZyJ9.X9WoMdw49Am8iQSUdVWL4w";
     public static final String ICON_NAME = "pin-marker-icon";
