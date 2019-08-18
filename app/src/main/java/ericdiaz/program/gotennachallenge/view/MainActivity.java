@@ -9,9 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
-import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
@@ -21,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ericdiaz.program.gotennachallenge.R;
-import ericdiaz.program.gotennachallenge.api.MapboxDirectionsService;
 import ericdiaz.program.gotennachallenge.model.Place;
 import ericdiaz.program.gotennachallenge.utils.LocationUtils;
 import ericdiaz.program.gotennachallenge.utils.MapboxUtils;
@@ -31,9 +28,6 @@ import ericdiaz.program.gotennachallenge.viewmodel.BaseViewModel;
 import ericdiaz.program.gotennachallenge.viewmodel.PlacesViewModel;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 
 public class MainActivity extends AppCompatActivity implements PlacesViewHolder.OnItemViewClickedListener {
@@ -130,15 +124,17 @@ public class MainActivity extends AppCompatActivity implements PlacesViewHolder.
                       initRecyclerView(places);
 
                       for (Place place : places) {
-                          String iD = String.valueOf(place.getId());
-                          MapboxUtils.addLocationPointToStyle(loadedStyle, iD, place.getLongitude(), place.getLatitude());
-                          MapboxUtils.addLocationPinLayerToStyle(loadedStyle, iD);
-                          getRoute(Point.fromLngLat(place.getLongitude(), place.getLatitude()));
+                          MapboxUtils.addLocationPointToStyle(loadedStyle, place.getId(), place.getLongitude(), place.getLatitude());
+                          MapboxUtils.addLocationPinLayerToStyle(loadedStyle, place.getId());
+
+                          placesViewModel.getDirectionsData(
+                            MapboxUtils.ACCESS_KEY,
+                            locationUtils.getUserLastKnownPoint(),
+                            locationUtils.getDestinationPoint(place.getLongitude(), place.getLatitude()),
+                            directionsResponse -> directionsRouteList.add(directionsResponse.body().routes().get(0)),
+                            throwable -> Log.d(TAG, "initMapBoxView: " + throwable.toString()));
                       }
-                  }, throwable -> {
                   });
-
-
             });
         });
     }
@@ -150,26 +146,6 @@ public class MainActivity extends AppCompatActivity implements PlacesViewHolder.
         adapter.setData(places);
         placesRecyclerView.setAdapter(adapter);
         placesRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
-    }
-
-    private void getRoute(Point destination) {
-        new MapboxDirectionsService()
-          .getClient(MapboxUtils.ACCESS_KEY, locationUtils.getUserLastKnownPoint(), destination)
-          .enqueueCall(new Callback<DirectionsResponse>() {
-              @Override
-              public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
-                  if (response.body() != null) {
-                      directionsRouteList.add(response.body().routes().get(0));
-                  } else if (response.body().routes().size() < 1) {
-                      Log.d(TAG, "No routes found");
-                  }
-              }
-
-              @Override
-              public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
-                  Log.d(TAG, "onFailure: " + throwable.toString());
-              }
-          });
     }
 
 

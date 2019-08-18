@@ -43,7 +43,7 @@ public class LocationUtils {
         return new LatLng(
           Objects.requireNonNull(
             locationComponent.getLastKnownLocation()).getLatitude(),
-            locationComponent.getLastKnownLocation().getLongitude());
+          locationComponent.getLastKnownLocation().getLongitude());
     }
 
     @SuppressLint("MissingPermission")
@@ -51,6 +51,10 @@ public class LocationUtils {
         return Point.fromLngLat(
           locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude(),
           locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude());
+    }
+
+    public Point getDestinationPoint(double longitude, double latitude) {
+        return Point.fromLngLat(longitude, latitude);
     }
 
     public void tearDown() {

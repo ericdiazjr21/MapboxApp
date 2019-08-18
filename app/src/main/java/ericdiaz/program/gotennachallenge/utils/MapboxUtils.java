@@ -53,11 +53,11 @@ public final class MapboxUtils {
     private static FeatureCollection dashedLineDirectionsFeatureCollection;
 
 
-    private static String getLayerId(@NonNull final String iD) {
+    private static String getLayerId(@NonNull final int iD) {
         return "layer-id" + ": " + iD;
     }
 
-    private static String getSourceId(@NonNull final String iD) {
+    private static String getSourceId(@NonNull final int iD) {
         return "source-id" + ": " + iD;
     }
 
@@ -97,10 +97,19 @@ public final class MapboxUtils {
           BitmapFactory.decodeResource(resources, R.drawable.mapbox_marker_icon_default));
     }
 
-    public static void addLocationPointToStyle(Style style, String iD, double longitude, double latitude) {
+    public static void addLocationPointToStyle(Style style, int iD, double longitude, double latitude) {
         GeoJsonSource geoJsonSource = new GeoJsonSource(MapboxUtils.getSourceId(iD), Feature.fromGeometry(
           Point.fromLngLat(longitude, latitude)));
         style.addSource(geoJsonSource);
+    }
+
+    public static void addLocationPinLayerToStyle(Style style, int iD) {
+
+        SymbolLayer symbolLayer = new SymbolLayer(MapboxUtils.getLayerId(iD), MapboxUtils.getSourceId(iD));
+        symbolLayer.withProperties(
+          PropertyFactory.iconImage(MapboxUtils.PIN_ICON)
+        );
+        style.addLayer(symbolLayer);
     }
 
     public static void drawNavigationPolylineRoute(final DirectionsRoute route, MapboxMap mapboxMap) {
@@ -121,14 +130,6 @@ public final class MapboxUtils {
                 }
             });
         }
-    }
-
-    public static void addLocationPinLayerToStyle(Style style, String iD) {
-        SymbolLayer symbolLayer = new SymbolLayer(MapboxUtils.getLayerId(iD), MapboxUtils.getSourceId(iD));
-        symbolLayer.withProperties(
-          PropertyFactory.iconImage(MapboxUtils.PIN_ICON)
-        );
-        style.addLayer(symbolLayer);
     }
 
     public static void setCameraPosition(MapboxMap mapboxMap, LatLng lastKnownPosition) {
