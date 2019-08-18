@@ -18,7 +18,7 @@
         android:id="@+id/place_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:background="#00FFFFFF"
+        android:background="@color/color_transparent"
         mapbox:layout_constraintBottom_toBottomOf="parent"
         mapbox:layout_constraintEnd_toEndOf="parent"
         mapbox:layout_constraintStart_toStartOf="parent" />

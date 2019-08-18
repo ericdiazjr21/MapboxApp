@@ -13,12 +13,14 @@ public class PlacesViewHolder extends RecyclerView.ViewHolder {
 
     private TextView placeNameTextView;
     private TextView placeDescriptionTextView;
+    private TextView moreInfoTextView;
     private OnItemViewClickedListener onItemViewClickedListener;
 
     PlacesViewHolder(@NonNull View itemView) {
         super(itemView);
         placeNameTextView = itemView.findViewById(R.id.place_name_text_view);
         placeDescriptionTextView = itemView.findViewById(R.id.place_description_text_view);
+        moreInfoTextView = itemView.findViewById(R.id.more_info_text_view);
 
         onItemViewClickedListener =
           itemView.getContext() instanceof OnItemViewClickedListener ?
@@ -29,7 +31,7 @@ public class PlacesViewHolder extends RecyclerView.ViewHolder {
         placeNameTextView.setText(place.getName());
         placeDescriptionTextView.setText(place.getDescription());
 
-        itemView.setOnClickListener(v ->
+        moreInfoTextView.setOnClickListener(v ->
           onItemViewClickedListener.onItemViewClicked(place.getId() - 1));
     }
 
