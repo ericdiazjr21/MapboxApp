@@ -39,7 +39,7 @@ public class LocationUtils {
         locationComponent.setRenderMode(RenderMode.COMPASS);
     }
 
-    public LatLng getLastKnownLatLng() {
+    public LatLng getUserLastKnownLatLng() {
         return new LatLng(
           Objects.requireNonNull(
             locationComponent.getLastKnownLocation()).getLatitude(),
@@ -47,7 +47,7 @@ public class LocationUtils {
     }
 
     @SuppressLint("MissingPermission")
-    public Point getLastKnownPoint() {
+    public Point getUserLastKnownPoint() {
         return Point.fromLngLat(
           locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLongitude(),
           locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER).getLatitude());
