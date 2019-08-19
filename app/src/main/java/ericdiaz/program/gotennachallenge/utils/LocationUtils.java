@@ -18,8 +18,8 @@ import com.mapbox.mapboxsdk.maps.Style;
 import java.util.Objects;
 
 /**
- * A Utility class for retrieving users location
- *
+ * A utility class for retrieving users location
+ * <p>
  * Created 8/14/19
  *
  * @author Eric Diaz

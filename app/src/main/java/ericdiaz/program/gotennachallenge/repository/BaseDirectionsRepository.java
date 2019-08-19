@@ -7,6 +7,14 @@ import com.mapbox.geojson.Point;
 import ericdiaz.program.gotennachallenge.api.MapboxDirectionsService;
 import io.reactivex.Single;
 
+/**
+ * A base repository for retrieving directions data from network
+ * <p>
+ * Created: 8/14/19
+ *
+ * @author Eric Diaz
+ */
+
 public interface BaseDirectionsRepository {
 
     Single<MapboxDirectionsService> getDirections(@NonNull final String accessToken,

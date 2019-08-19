@@ -5,7 +5,7 @@ import ericdiaz.program.gotennachallenge.model.Place;
 import io.reactivex.Single;
 
 /**
- * A repository for conducting network calls
+ * A repository for conducting places data network calls
  * <p>
  * Created 8/13/19
  *

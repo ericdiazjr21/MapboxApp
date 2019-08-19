@@ -9,8 +9,8 @@ import ericdiaz.program.gotennachallenge.db.PlacesDatabase;
 import ericdiaz.program.gotennachallenge.model.Place;
 
 /**
- * A repository for reading and writing to local storage
- *
+ * A repository for reading and writing data to local storage
+ * <p>
  * Created: 8/14/19
  *
  * @author Eric Diaz

@@ -93,7 +93,7 @@ public final class MapUtils {
             .withProperties(
               PropertyFactory.iconImage(Constants.PERSON_ICON_ID),
               PropertyFactory.iconSize(2f),
-              PropertyFactory.iconAllowOverlap(true),
+              PropertyFactory.iconAllowOverlap(false),
               PropertyFactory.iconIgnorePlacement(true)
             ));
     }
@@ -120,9 +120,9 @@ public final class MapUtils {
             Constants.PERSON_LAYER_ID);
     }
 
-    public void addLocationPointToStyle(final int iD,
-                                        final double longitude,
-                                        final double latitude) {
+    public void addLocationCoordinatesToStyle(final int iD,
+                                              final double longitude,
+                                              final double latitude) {
         loadedStyle.addSource(
 
           new GeoJsonSource(getSourceId(iD), Feature.fromGeometry(Point.fromLngLat(longitude, latitude))));

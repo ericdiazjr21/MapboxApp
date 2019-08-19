@@ -1,6 +1,7 @@
 package ericdiaz.program.gotennachallenge.viewmodel;
 
 import android.app.Application;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -25,7 +26,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * A lifecycle-aware ViewModel for maneging data
+ * A lifecycle-aware ViewModel for managing data
  * <p>
  * Created: 8/13/19
  *
@@ -37,7 +38,7 @@ public final class PlacesViewModel extends AndroidViewModel implements BaseViewM
     //==============================================================================================
     // Class Properties
     //==============================================================================================
-
+    private static final String TAG = "PlacesViewModel";
     private final BaseNetworkRepository placesNetworkRepository;
     private final BaseDirectionsRepository directionsRepository;
     private final BaseDatabaseRepository placesDatabaseRepository;
@@ -102,6 +103,8 @@ public final class PlacesViewModel extends AndroidViewModel implements BaseViewM
 
     private void storePlacesInDatabase(Place[] places) {
         for (Place place : places) {
+            Log.d(TAG, "getPlacesData: " + place.getLongitude() + " " + place.getLatitude());
+
             placesDatabaseRepository.insertPlace(place);
         }
     }

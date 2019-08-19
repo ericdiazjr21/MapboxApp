@@ -16,7 +16,11 @@ import java.util.List;
 import ericdiaz.program.gotennachallenge.R;
 
 /**
- * Permission Activity to get access
+ * Permission Activity to get location access
+ * <p>
+ * Created: 8/15/19
+ *
+ * @author Eric Diaz
  */
 
 public class PermissionActivity extends AppCompatActivity implements PermissionsListener {
@@ -58,11 +62,13 @@ public class PermissionActivity extends AppCompatActivity implements Permissions
     }
 
     //==============================================================================================
-    // Permission Listener Interface
+    // Permission Listener Interface Methods Implementation
     //==============================================================================================
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 

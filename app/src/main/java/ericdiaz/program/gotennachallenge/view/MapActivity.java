@@ -62,11 +62,12 @@ public class MapActivity extends AppCompatActivity implements PlacesViewHolder.O
 
         Mapbox.getInstance(this, MapUtils.getAccessKey());
         setContentView(R.layout.activity_main);
-        initMap(savedInstanceState);
 
         //Initialize ViewModel and Utility
-        placesViewModel = new ViewModelProvider.AndroidViewModelFactory(getApplication()).create(PlacesViewModel.class);
         locationUtils = new LocationUtils(this);
+        placesViewModel = new ViewModelProvider.AndroidViewModelFactory(getApplication()).create(PlacesViewModel.class);
+
+        initMap(savedInstanceState);
     }
 
     @Override
@@ -160,7 +161,7 @@ public class MapActivity extends AppCompatActivity implements PlacesViewHolder.O
                       initRecyclerView(places);
 
                       for (Place place : places) {
-                          mapUtils.addLocationPointToStyle(
+                          mapUtils.addLocationCoordinatesToStyle(
                             place.getId(),
                             place.getLongitude(),
                             place.getLatitude());

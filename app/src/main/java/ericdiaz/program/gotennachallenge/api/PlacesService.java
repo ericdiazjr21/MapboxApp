@@ -5,7 +5,7 @@ import io.reactivex.Single;
 import retrofit2.http.GET;
 
 /**
- * Interface for service connecting to api
+ * A Retrofit service Interface for connection to API
  * <p>
  * Created 8/13/2019
  *

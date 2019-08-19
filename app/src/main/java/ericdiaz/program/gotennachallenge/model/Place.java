@@ -2,7 +2,19 @@ package ericdiaz.program.gotennachallenge.model;
 
 import androidx.annotation.NonNull;
 
+/**
+ * A model class for places data
+ * <p>
+ * Created: 8/14/19
+ *
+ * @author Eric Diaz
+ */
+
 public final class Place {
+
+    //==============================================================================================
+    // Class Properties
+    //==============================================================================================
 
     private final int id;
     private final String name;
@@ -10,6 +22,9 @@ public final class Place {
     private final double longitude;
     private final String description;
 
+    //==============================================================================================
+    // Constructor
+    //==============================================================================================
 
     public Place(final int id,
                  @NonNull final String name,
@@ -22,6 +37,10 @@ public final class Place {
         this.longitude = longitude;
         this.description = description;
     }
+
+    //==============================================================================================
+    // Class Instance Methods
+    //==============================================================================================
 
     public int getId() {
         return id;

@@ -15,22 +15,43 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public final class RetrofitServiceGenerator {
 
+    //==============================================================================================
+    // Class Properties
+    //==============================================================================================
+
     private static final String BASE_URL = "https://annetog.gotenna.com/";
-    private static Retrofit singleInstance;
+    private static Retrofit singleRetrofitInstance;
+    private static PlacesService singlePlacesService;
+
+    //==============================================================================================
+    // Constructor
+    //==============================================================================================
+
+    private RetrofitServiceGenerator() {}
+
+    //==============================================================================================
+    // Class Static Methods
+    //==============================================================================================
 
     private static Retrofit getRetrofit() {
+        if (singleRetrofitInstance == null) {
 
-        if (singleInstance == null) {
-            singleInstance = new Retrofit.Builder()
+            singleRetrofitInstance = new Retrofit.Builder()
               .baseUrl(BASE_URL)
               .addConverterFactory(GsonConverterFactory.create())
               .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
               .build();
         }
-        return singleInstance;
+
+        return singleRetrofitInstance;
     }
 
     public static PlacesService getPlacesService() {
-        return getRetrofit().create(PlacesService.class);
+        if (singlePlacesService == null) {
+
+            singlePlacesService = getRetrofit().create(PlacesService.class);
+        }
+
+        return singlePlacesService;
     }
 }

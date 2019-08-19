@@ -10,9 +10,25 @@ import androidx.recyclerview.widget.RecyclerView;
 import ericdiaz.program.gotennachallenge.R;
 import ericdiaz.program.gotennachallenge.model.Place;
 
+/**
+ * RecyclerView Adapter implementation for showing list of places
+ * <p>
+ * Created 8/15/19
+ *
+ * @author Eric Diaz
+ */
+
 public class PlacesAdapter extends RecyclerView.Adapter<PlacesViewHolder> {
 
+    //==============================================================================================
+    // Class Properties
+    //==============================================================================================
+
     private Place[] places = new Place[0];
+
+    //==============================================================================================
+    // RecyclerView Adapter Interface Methods Implementation
+    //==============================================================================================
 
     @NonNull
     @Override
@@ -26,11 +42,14 @@ public class PlacesAdapter extends RecyclerView.Adapter<PlacesViewHolder> {
         holder.onBind(places[position]);
     }
 
-
     @Override
     public int getItemCount() {
         return places.length;
     }
+
+    //==============================================================================================
+    // Class Instance Methods
+    //==============================================================================================
 
     public void setData(Place[] places) {
         this.places = places;
