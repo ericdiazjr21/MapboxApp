@@ -9,7 +9,7 @@ import ericdiaz.program.gotennachallenge.model.Place;
  *
  * Created: 8/15/19
  *
- *
+ * @author Eric Diaz
  */
 
 public interface BaseDatabase {

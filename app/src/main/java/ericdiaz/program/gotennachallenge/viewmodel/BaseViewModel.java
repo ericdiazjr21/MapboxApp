@@ -10,7 +10,7 @@ import ericdiaz.program.gotennachallenge.model.Place;
 import io.reactivex.Single;
 
 /**
- * A base ViewModel interface for communicating between repositories and views
+ * A base ViewModel Interface for communicating between repositories and views
  * <p>
  * Created: 8/14/19
  *

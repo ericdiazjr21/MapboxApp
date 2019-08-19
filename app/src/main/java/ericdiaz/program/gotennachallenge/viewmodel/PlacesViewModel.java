@@ -37,7 +37,6 @@ public final class PlacesViewModel extends AndroidViewModel implements BaseViewM
     //==============================================================================================
     // Class Properties
     //==============================================================================================
-    private static final String TAG = "PlacesViewModel";
     private final BaseNetworkRepository placesNetworkRepository;
     private final BaseDirectionsRepository directionsRepository;
     private final BaseDatabaseRepository placesDatabaseRepository;

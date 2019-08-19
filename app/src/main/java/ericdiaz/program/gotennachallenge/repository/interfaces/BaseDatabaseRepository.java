@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 import ericdiaz.program.gotennachallenge.model.Place;
 
 /**
- * A base database repository for reading and writing to local storage
+ * A base repository Interface for reading and writing to local storage
  * <p>
  * Created: 8/14/19
  *

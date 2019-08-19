@@ -24,6 +24,7 @@ import ericdiaz.program.gotennachallenge.viewmodel.BaseViewModel;
 import ericdiaz.program.gotennachallenge.viewmodel.PlacesViewModel;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import timber.log.Timber;
 
 /**
  * Map Activity where UI is implemented
@@ -131,7 +132,7 @@ public class MapActivity extends AppCompatActivity implements PlacesViewHolder.O
 
                 mapUtils.drawNavigationRoute(place.getId() - 1);
             },
-            throwable -> Log.d(TAG, "initMap: " + throwable.toString()));
+            throwable -> Timber.d("initMap: %s", throwable.toString()));
     }
 
 
@@ -192,9 +193,14 @@ public class MapActivity extends AppCompatActivity implements PlacesViewHolder.O
 
     private void initRecyclerView(Place[] places) {
         RecyclerView placesRecyclerView = findViewById(R.id.place_recycler_view);
+
         PlacesAdapter adapter = new PlacesAdapter();
+
         adapter.setData(places);
+
         placesRecyclerView.setAdapter(adapter);
+
         placesRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
     }
+
 }

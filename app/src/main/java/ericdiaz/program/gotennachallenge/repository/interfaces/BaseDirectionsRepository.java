@@ -8,7 +8,7 @@ import ericdiaz.program.gotennachallenge.data.api.MapboxDirectionsService;
 import io.reactivex.Single;
 
 /**
- * A base repository for retrieving directions data from network
+ * A base repository Interface for retrieving directions data from network
  * <p>
  * Created: 8/14/19
  *
