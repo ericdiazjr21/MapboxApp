@@ -1,5 +1,6 @@
-package ericdiaz.program.gotennachallenge.api;
+package ericdiaz.program.gotennachallenge.data.api;
 
+import ericdiaz.program.gotennachallenge.data.api.interfaces.PlacesService;
 import io.reactivex.schedulers.Schedulers;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;

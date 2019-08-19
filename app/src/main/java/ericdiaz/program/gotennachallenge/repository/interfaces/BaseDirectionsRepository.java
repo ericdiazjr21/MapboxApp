@@ -1,10 +1,10 @@
-package ericdiaz.program.gotennachallenge.repository;
+package ericdiaz.program.gotennachallenge.repository.interfaces;
 
 import androidx.annotation.NonNull;
 
 import com.mapbox.geojson.Point;
 
-import ericdiaz.program.gotennachallenge.api.MapboxDirectionsService;
+import ericdiaz.program.gotennachallenge.data.api.MapboxDirectionsService;
 import io.reactivex.Single;
 
 /**

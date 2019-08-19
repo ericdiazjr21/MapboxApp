@@ -10,14 +10,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.Style;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 import ericdiaz.program.gotennachallenge.R;
 import ericdiaz.program.gotennachallenge.model.Place;
@@ -50,7 +45,6 @@ public class MapActivity extends AppCompatActivity implements PlacesViewHolder.O
     private BaseViewModel placesViewModel;
     private LocationUtils locationUtils;
     private MapUtils mapUtils;
-    private final Map<Integer, DirectionsRoute> directionsRouteHashMap = new HashMap<>();
 
     //==============================================================================================
     // Lifecycle Methods
@@ -120,6 +114,8 @@ public class MapActivity extends AppCompatActivity implements PlacesViewHolder.O
 
     @Override
     public void onItemViewClicked(Place place) {
+
+        // Contact directions API when "GET DIRECTIONS" clicked
         placesViewModel
           .getDirectionsData(
 
@@ -131,28 +127,13 @@ public class MapActivity extends AppCompatActivity implements PlacesViewHolder.O
 
             directionsResponse -> {
 
-                if (directionsRouteHashMap.containsKey(place.getId() - 1)) {
+                mapUtils.updateRouteMap(place.getId() - 1, directionsResponse);
 
-                    if (directionsResponse.body() != null) {
-
-                        directionsRouteHashMap
-
-                          .replace(place.getId() - 1,
-
-                            directionsRouteHashMap.get(place.getId() - 1),
-
-                            directionsResponse.body().routes().get(0));
-                    }
-
-                } else {
-
-                    directionsRouteHashMap.put(place.getId() - 1, directionsResponse.body().routes().get(0));
-                }
-
-                mapUtils.drawNavigationRoute(Objects.requireNonNull(directionsRouteHashMap.get(place.getId() - 1)));
+                mapUtils.drawNavigationRoute(place.getId() - 1);
             },
             throwable -> Log.d(TAG, "initMap: " + throwable.toString()));
     }
+
 
     //==============================================================================================
     // Class Instance Methods
@@ -163,10 +144,12 @@ public class MapActivity extends AppCompatActivity implements PlacesViewHolder.O
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(mapboxMap -> {
 
+            //Initialize Style builder and MapUtils
             Style.Builder styleBuilder = new Style.Builder();
 
             mapUtils = new MapUtils(mapboxMap, styleBuilder);
 
+            //Compose Style object through Builder
             mapUtils.addPersonLayerToStyle(locationUtils.getUserLastKnownPoint());
 
             mapUtils.addPinIconToStyle(
@@ -174,14 +157,18 @@ public class MapActivity extends AppCompatActivity implements PlacesViewHolder.O
 
             mapUtils.addDirectionLinesToStyle();
 
+            //Set Style from builder and return loadedStyle
             mapboxMap.setStyle(styleBuilder, loadedStyle -> {
 
+                //Begin tracking users location
                 locationUtils.enableLocationComponent(loadedStyle, mapboxMap);
 
                 mapUtils.setLoadedStyle(loadedStyle);
 
+                //Set camera animation
                 mapUtils.setCameraPosition(locationUtils.getUserLastKnownLatLng());
 
+                //Initialize network call to places API
                 disposable = placesViewModel
                   .getPlacesData()
                   .observeOn(AndroidSchedulers.mainThread())
@@ -189,6 +176,7 @@ public class MapActivity extends AppCompatActivity implements PlacesViewHolder.O
 
                       initRecyclerView(places);
 
+                      //Add each locations position to the map
                       for (Place place : places) {
                           mapUtils.addLocationCoordinatesToStyle(
                             place.getId(),

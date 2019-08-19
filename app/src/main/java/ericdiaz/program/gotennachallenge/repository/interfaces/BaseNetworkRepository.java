@@ -1,4 +1,4 @@
-package ericdiaz.program.gotennachallenge.repository;
+package ericdiaz.program.gotennachallenge.repository.interfaces;
 
 import ericdiaz.program.gotennachallenge.model.Place;
 import io.reactivex.Single;

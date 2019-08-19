@@ -1,4 +1,4 @@
-package ericdiaz.program.gotennachallenge.api;
+package ericdiaz.program.gotennachallenge.data.api;
 
 import androidx.annotation.NonNull;
 

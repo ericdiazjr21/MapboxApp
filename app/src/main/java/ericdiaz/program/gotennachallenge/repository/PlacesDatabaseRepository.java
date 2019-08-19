@@ -4,9 +4,10 @@ import android.content.Context;
 
 import androidx.annotation.NonNull;
 
-import ericdiaz.program.gotennachallenge.db.BaseDatabase;
-import ericdiaz.program.gotennachallenge.db.PlacesDatabase;
+import ericdiaz.program.gotennachallenge.data.db.BaseDatabase;
+import ericdiaz.program.gotennachallenge.data.db.PlacesDatabase;
 import ericdiaz.program.gotennachallenge.model.Place;
+import ericdiaz.program.gotennachallenge.repository.interfaces.BaseDatabaseRepository;
 
 /**
  * A repository for reading and writing data to local storage

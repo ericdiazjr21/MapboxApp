@@ -4,8 +4,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import ericdiaz.program.gotennachallenge.api.PlacesService;
-import ericdiaz.program.gotennachallenge.api.RetrofitServiceGenerator;
+import ericdiaz.program.gotennachallenge.data.api.interfaces.PlacesService;
+import ericdiaz.program.gotennachallenge.data.api.RetrofitServiceGenerator;
 import ericdiaz.program.gotennachallenge.model.Place;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.TestObserver;

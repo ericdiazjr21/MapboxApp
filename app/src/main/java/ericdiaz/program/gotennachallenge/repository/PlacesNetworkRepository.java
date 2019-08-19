@@ -1,7 +1,8 @@
 package ericdiaz.program.gotennachallenge.repository;
 
-import ericdiaz.program.gotennachallenge.api.RetrofitServiceGenerator;
+import ericdiaz.program.gotennachallenge.data.api.RetrofitServiceGenerator;
 import ericdiaz.program.gotennachallenge.model.Place;
+import ericdiaz.program.gotennachallenge.repository.interfaces.BaseNetworkRepository;
 import io.reactivex.Single;
 
 /**

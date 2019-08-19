@@ -4,8 +4,8 @@ import androidx.annotation.NonNull;
 
 import com.mapbox.geojson.Point;
 
-import ericdiaz.program.gotennachallenge.api.OnNetworkResponseFailure;
-import ericdiaz.program.gotennachallenge.api.OnNetworkResponseSuccess;
+import ericdiaz.program.gotennachallenge.data.api.interfaces.OnNetworkResponseFailure;
+import ericdiaz.program.gotennachallenge.data.api.interfaces.OnNetworkResponseSuccess;
 import ericdiaz.program.gotennachallenge.model.Place;
 import io.reactivex.Single;
 

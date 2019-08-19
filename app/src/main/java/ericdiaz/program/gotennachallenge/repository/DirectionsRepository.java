@@ -4,7 +4,8 @@ import androidx.annotation.NonNull;
 
 import com.mapbox.geojson.Point;
 
-import ericdiaz.program.gotennachallenge.api.MapboxDirectionsService;
+import ericdiaz.program.gotennachallenge.data.api.MapboxDirectionsService;
+import ericdiaz.program.gotennachallenge.repository.interfaces.BaseDirectionsRepository;
 import io.reactivex.Single;
 import io.reactivex.schedulers.Schedulers;
 

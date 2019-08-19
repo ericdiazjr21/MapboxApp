@@ -5,6 +5,7 @@ import android.graphics.Color;
 
 import androidx.annotation.NonNull;
 
+import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.FeatureCollection;
@@ -22,8 +23,11 @@ import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
+
+import retrofit2.Response;
 
 import static com.mapbox.core.constants.Constants.PRECISION_6;
 
@@ -43,6 +47,7 @@ public final class MapUtils {
 
     private final MapboxMap mapboxMap;
     private final Style.Builder styleBuilder;
+    private final Map<Integer, DirectionsRoute> directionsRouteHashMap = new HashMap<>();
     private Style loadedStyle;
 
     //==============================================================================================
@@ -136,11 +141,34 @@ public final class MapUtils {
         mapboxMap.animateCamera(CameraUpdateFactory.newCameraPosition(position), 2000);
     }
 
-    public void drawNavigationRoute(@NonNull final DirectionsRoute route) {
+    public void updateRouteMap(final int position,
+                               @NonNull Response<DirectionsResponse> directionsResponse) {
+        if (directionsRouteHashMap.containsKey(position)) {
+
+            if (directionsResponse.body() != null) {
+
+                directionsRouteHashMap
+
+                  .replace(position,
+
+                    directionsRouteHashMap.get(position),
+
+                    directionsResponse.body().routes().get(0));
+            }
+
+        } else {
+
+            directionsRouteHashMap.put(position, directionsResponse.body().routes().get(0));
+        }
+    }
+
+    public void drawNavigationRoute(int position) {
 
         final List<Feature> directionsRouteFeatureList = new ArrayList<>();
 
-        final LineString lineString = LineString.fromPolyline(Objects.requireNonNull(route.geometry()), PRECISION_6);
+        final LineString lineString = LineString
+
+          .fromPolyline(directionsRouteHashMap.get(position).geometry(), PRECISION_6);
 
         final List<Point> lineStringCoordinates = lineString.coordinates();
 

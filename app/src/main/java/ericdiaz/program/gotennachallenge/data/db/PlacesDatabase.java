@@ -1,4 +1,4 @@
-package ericdiaz.program.gotennachallenge.db;
+package ericdiaz.program.gotennachallenge.data.db;
 
 import android.content.Context;
 import android.database.Cursor;

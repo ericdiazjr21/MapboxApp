@@ -1,7 +1,6 @@
 package ericdiaz.program.gotennachallenge.viewmodel;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -9,12 +8,12 @@ import androidx.lifecycle.AndroidViewModel;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.geojson.Point;
 
-import ericdiaz.program.gotennachallenge.api.OnNetworkResponseFailure;
-import ericdiaz.program.gotennachallenge.api.OnNetworkResponseSuccess;
+import ericdiaz.program.gotennachallenge.data.api.interfaces.OnNetworkResponseFailure;
+import ericdiaz.program.gotennachallenge.data.api.interfaces.OnNetworkResponseSuccess;
 import ericdiaz.program.gotennachallenge.model.Place;
-import ericdiaz.program.gotennachallenge.repository.BaseDatabaseRepository;
-import ericdiaz.program.gotennachallenge.repository.BaseDirectionsRepository;
-import ericdiaz.program.gotennachallenge.repository.BaseNetworkRepository;
+import ericdiaz.program.gotennachallenge.repository.interfaces.BaseDatabaseRepository;
+import ericdiaz.program.gotennachallenge.repository.interfaces.BaseDirectionsRepository;
+import ericdiaz.program.gotennachallenge.repository.interfaces.BaseNetworkRepository;
 import ericdiaz.program.gotennachallenge.repository.DirectionsRepository;
 import ericdiaz.program.gotennachallenge.repository.PlacesDatabaseRepository;
 import ericdiaz.program.gotennachallenge.repository.PlacesNetworkRepository;
