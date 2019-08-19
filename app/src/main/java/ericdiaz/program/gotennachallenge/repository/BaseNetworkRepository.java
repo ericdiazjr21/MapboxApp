@@ -5,5 +5,5 @@ import io.reactivex.Single;
 
 public interface BaseNetworkRepository {
 
-    Single<Place[]> getPlace();
+    Single<Place[]> getPlaces();
 }

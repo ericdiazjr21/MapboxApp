@@ -1,5 +1,6 @@
 package ericdiaz.program.gotennachallenge.view;
 
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -12,16 +13,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.maps.MapView;
-import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.Style;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import ericdiaz.program.gotennachallenge.R;
 import ericdiaz.program.gotennachallenge.model.Place;
 import ericdiaz.program.gotennachallenge.utils.LocationUtils;
-import ericdiaz.program.gotennachallenge.utils.MapboxUtils;
+import ericdiaz.program.gotennachallenge.utils.MapUtils;
 import ericdiaz.program.gotennachallenge.view.recyclerview.PlacesAdapter;
 import ericdiaz.program.gotennachallenge.view.recyclerview.PlacesViewHolder;
 import ericdiaz.program.gotennachallenge.viewmodel.BaseViewModel;
@@ -29,25 +30,43 @@ import ericdiaz.program.gotennachallenge.viewmodel.PlacesViewModel;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 
+/**
+ * Map Activity where UI is implemented
+ * <p>
+ * Created 8/14/19
+ *
+ * @author Eric Diaz
+ */
 
-public class MainActivity extends AppCompatActivity implements PlacesViewHolder.OnItemViewClickedListener {
+public class MapActivity extends AppCompatActivity implements PlacesViewHolder.OnItemViewClickedListener {
 
-    private static final String TAG = "MainActivity";
+    //==============================================================================================
+    // Class Properties
+    //==============================================================================================
+
+    private static final String TAG = "MapActivity";
     private MapView mapView;
-    private MapboxMap mapboxMap;
     private Disposable disposable;
     private BaseViewModel placesViewModel;
     private LocationUtils locationUtils;
+    private MapUtils mapUtils;
     private final List<DirectionsRoute> directionsRouteList = new ArrayList<>();
+
+    //==============================================================================================
+    // Lifecycle Methods
+    //==============================================================================================
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Mapbox.getInstance(this, MapboxUtils.ACCESS_KEY);
+
+        Mapbox.getInstance(this, MapUtils.getAccessKey());
         setContentView(R.layout.activity_main);
-        initMapBoxView(savedInstanceState);
-        locationUtils = new LocationUtils(this);
+        initMap(savedInstanceState);
+
+        //Initialize ViewModel and Utility
         placesViewModel = new ViewModelProvider.AndroidViewModelFactory(getApplication()).create(PlacesViewModel.class);
+        locationUtils = new LocationUtils(this);
     }
 
     @Override
@@ -66,7 +85,6 @@ public class MainActivity extends AppCompatActivity implements PlacesViewHolder.
     public void onPause() {
         super.onPause();
         mapView.onPause();
-        disposable.dispose();
     }
 
     @Override
@@ -86,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements PlacesViewHolder.
         super.onDestroy();
         mapView.onDestroy();
         locationUtils.tearDown();
+        disposable.dispose();
     }
 
     @Override
@@ -94,27 +113,44 @@ public class MainActivity extends AppCompatActivity implements PlacesViewHolder.
         mapView.onSaveInstanceState(outState);
     }
 
+    //==============================================================================================
+    // PlacesViewHolder Interface Methods
+    //==============================================================================================
+
     @Override
     public void onItemViewClicked(int position) {
-        MapboxUtils.drawNavigationPolylineRoute(directionsRouteList.get(position), mapboxMap);
+        mapUtils.drawNavigationRoute(directionsRouteList.get(position));
     }
 
-    private void initMapBoxView(@Nullable Bundle savedInstanceState) {
+    //==============================================================================================
+    // Class Instance Methods
+    //==============================================================================================
+
+    private void initMap(@Nullable Bundle savedInstanceState) {
         mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(mapboxMap -> {
-            this.mapboxMap = mapboxMap;
 
             Style.Builder styleBuilder = new Style.Builder();
 
-            MapboxUtils.addPersonIconToStyle(styleBuilder, getDrawable(R.drawable.ic_person), locationUtils.getUserLastKnownPoint());
-            MapboxUtils.addPinIconToStyle(styleBuilder, MainActivity.this.getResources());
-            MapboxUtils.addDirectionLinesToStyle(styleBuilder);
+            mapUtils = new MapUtils(mapboxMap, styleBuilder);
+
+            mapUtils.addPersonIconToStyle(
+              Objects.requireNonNull(getDrawable(R.drawable.ic_person)),
+              locationUtils.getUserLastKnownPoint());
+
+            mapUtils.addPinIconToStyle(
+              BitmapFactory.decodeResource(getResources(), R.drawable.mapbox_marker_icon_default));
+
+            mapUtils.addDirectionLinesToStyle();
 
             mapboxMap.setStyle(styleBuilder, loadedStyle -> {
+
                 locationUtils.enableLocationComponent(loadedStyle, mapboxMap);
 
-                MapboxUtils.setCameraPosition(mapboxMap, locationUtils.getUserLastKnownLatLng());
+                mapUtils.setLoadedStyle(loadedStyle);
+
+                mapUtils.setCameraPosition(locationUtils.getUserLastKnownLatLng());
 
                 disposable = placesViewModel
                   .getPlacesData()
@@ -124,21 +160,24 @@ public class MainActivity extends AppCompatActivity implements PlacesViewHolder.
                       initRecyclerView(places);
 
                       for (Place place : places) {
-                          MapboxUtils.addLocationPointToStyle(loadedStyle, place.getId(), place.getLongitude(), place.getLatitude());
-                          MapboxUtils.addLocationPinLayerToStyle(loadedStyle, place.getId());
+                          mapUtils.addLocationPointToStyle(
+                            place.getId(),
+                            place.getLongitude(),
+                            place.getLatitude());
+
+                          mapUtils.addLocationPinLayerToStyle(place.getId());
 
                           placesViewModel.getDirectionsData(
-                            MapboxUtils.ACCESS_KEY,
+                            MapUtils.getAccessKey(),
                             locationUtils.getUserLastKnownPoint(),
                             locationUtils.getDestinationPoint(place.getLongitude(), place.getLatitude()),
                             directionsResponse -> directionsRouteList.add(directionsResponse.body().routes().get(0)),
-                            throwable -> Log.d(TAG, "initMapBoxView: " + throwable.toString()));
+                            throwable -> Log.d(TAG, "initMap: " + throwable.toString()));
                       }
                   });
             });
         });
     }
-
 
     private void initRecyclerView(Place[] places) {
         RecyclerView placesRecyclerView = findViewById(R.id.place_recycler_view);
@@ -147,6 +186,4 @@ public class MainActivity extends AppCompatActivity implements PlacesViewHolder.
         placesRecyclerView.setAdapter(adapter);
         placesRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
     }
-
-
 }

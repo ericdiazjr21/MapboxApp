@@ -8,7 +8,6 @@ import androidx.lifecycle.AndroidViewModel;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.geojson.Point;
 
-import ericdiaz.program.gotennachallenge.api.MapboxDirectionsService;
 import ericdiaz.program.gotennachallenge.api.OnNetworkResponseFailure;
 import ericdiaz.program.gotennachallenge.api.OnNetworkResponseSuccess;
 import ericdiaz.program.gotennachallenge.model.Place;
@@ -20,53 +19,66 @@ import ericdiaz.program.gotennachallenge.repository.PlacesDatabaseRepository;
 import ericdiaz.program.gotennachallenge.repository.PlacesNetworkRepository;
 import io.reactivex.Single;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * A ViewModel that is lifecycle-aware for maneging places data
+ * A lifecycle-aware ViewModel for maneging data
  * <p>
  * Created: 8/13/19
  *
  * @author Eric Diaz
  */
 
-public class PlacesViewModel extends AndroidViewModel implements BaseViewModel {
+public final class PlacesViewModel extends AndroidViewModel implements BaseViewModel {
 
-    private BaseNetworkRepository placesNetworkRepository;
-    private BaseDatabaseRepository placesDatabaseRepository;
-    private BaseDirectionsRepository directionsRepository;
+    //==============================================================================================
+    // Class Properties
+    //==============================================================================================
+
+    private final BaseNetworkRepository placesNetworkRepository;
+    private final BaseDirectionsRepository directionsRepository;
+    private final BaseDatabaseRepository placesDatabaseRepository;
     private Disposable disposable;
+
+    //==============================================================================================
+    // Constructor
+    //==============================================================================================
 
     public PlacesViewModel(@NonNull Application application) {
         super(application);
-        directionsRepository = new DirectionsRepository();
         placesNetworkRepository = new PlacesNetworkRepository();
+        directionsRepository = new DirectionsRepository();
         placesDatabaseRepository = new PlacesDatabaseRepository(application);
     }
+
+    //==============================================================================================
+    // BaseViewModel Interface Methods
+    //==============================================================================================
 
     @Override
     public Single<Place[]> getPlacesData() {
         if (placesDatabaseRepository.isEmpty()) {
-            return placesNetworkRepository.getPlace()
+            return placesNetworkRepository
+              .getPlaces()
               .map(places -> {
-                  for (Place place : places) {
-                      placesDatabaseRepository.insertPlace(place);
-                  }
+                  storePlacesInDatabase(places);
                   return places;
               });
         } else {
             return Single.just(placesDatabaseRepository
-              .getAllPlaces());
+              .getAllPlaces()).subscribeOn(Schedulers.io());
         }
     }
 
-    public void getDirectionsData(@NonNull String accessToken,
-                                  @NonNull Point origin,
-                                  @NonNull Point destination,
-                                  @NonNull OnNetworkResponseSuccess responseSuccess,
-                                  @NonNull OnNetworkResponseFailure responseFailure) {
+    @Override
+    public void getDirectionsData(@NonNull final String accessToken,
+                                  @NonNull final Point origin,
+                                  @NonNull final Point destination,
+                                  @NonNull final OnNetworkResponseSuccess responseSuccess,
+                                  @NonNull final OnNetworkResponseFailure responseFailure) {
         disposable = directionsRepository
           .getDirections(accessToken, origin, destination)
           .subscribe(mapboxDirectionsService -> mapboxDirectionsService
@@ -83,6 +95,20 @@ public class PlacesViewModel extends AndroidViewModel implements BaseViewModel {
                 }
             }));
     }
+
+    //==============================================================================================
+    // Class Instance Methods
+    //==============================================================================================
+
+    private void storePlacesInDatabase(Place[] places) {
+        for (Place place : places) {
+            placesDatabaseRepository.insertPlace(place);
+        }
+    }
+
+    //==============================================================================================
+    // Super Class Methods
+    //==============================================================================================
 
     @Override
     protected void onCleared() {

@@ -15,9 +15,21 @@ import java.util.List;
 
 import ericdiaz.program.gotennachallenge.R;
 
-public class SplashActivity extends AppCompatActivity implements PermissionsListener {
+/**
+ * Permission Activity to get access
+ */
+
+public class PermissionActivity extends AppCompatActivity implements PermissionsListener {
+
+    //==============================================================================================
+    // Class Properties
+    //==============================================================================================
 
     private PermissionsManager permissionsManager;
+
+    //==============================================================================================
+    // Lifecycle Methods
+    //==============================================================================================
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -25,6 +37,10 @@ public class SplashActivity extends AppCompatActivity implements PermissionsList
         setContentView(R.layout.activity_splash);
         requestLocationPermission();
     }
+
+    //==============================================================================================
+    // Class Instance Methods
+    //==============================================================================================
 
     private void requestLocationPermission() {
         if (!PermissionsManager.areLocationPermissionsGranted(this)) {
@@ -36,10 +52,14 @@ public class SplashActivity extends AppCompatActivity implements PermissionsList
     }
 
     private void startMainActivity() {
-        Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+        Intent intent = new Intent(PermissionActivity.this, MapActivity.class);
         startActivity(intent);
         finish();
     }
+
+    //==============================================================================================
+    // Permission Listener Interface
+    //==============================================================================================
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

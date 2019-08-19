@@ -13,7 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * @author EricDiaz
  */
 
-public class RetrofitServiceGenerator {
+public final class RetrofitServiceGenerator {
 
     private static final String BASE_URL = "https://annetog.gotenna.com/";
     private static Retrofit singleInstance;

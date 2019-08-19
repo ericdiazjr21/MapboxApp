@@ -14,8 +14,12 @@ import io.reactivex.Single;
 
 public final class PlacesNetworkRepository implements BaseNetworkRepository {
 
+    //==============================================================================================
+    // BaseNetworkRepository Interface Methods Implementation
+    //==============================================================================================
+
     @Override
-    public Single<Place[]> getPlace() {
+    public Single<Place[]> getPlaces() {
         return RetrofitServiceGenerator.getPlacesService().getPlaces();
     }
 }

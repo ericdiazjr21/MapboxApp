@@ -17,16 +17,36 @@ import com.mapbox.mapboxsdk.maps.Style;
 
 import java.util.Objects;
 
-public class LocationUtils {
+/**
+ * A Utility class for retrieving users location
+ *
+ * Created 8/14/19
+ *
+ * @author Eric Diaz
+ */
+
+public final class LocationUtils {
+
+    //==============================================================================================
+    // Class Properties
+    //==============================================================================================
 
     private Context context;
     private LocationComponent locationComponent;
     private LocationManager locationManager;
 
+    //==============================================================================================
+    // Constructor
+    //==============================================================================================
+
     public LocationUtils(@NonNull Context context) {
         this.context = context;
         locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
     }
+
+    //==============================================================================================
+    // Class Instance Methods
+    //==============================================================================================
 
     @SuppressLint("MissingPermission")
     public void enableLocationComponent(@NonNull Style loadedMapStyle,

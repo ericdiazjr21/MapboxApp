@@ -8,5 +8,4 @@ import retrofit2.Response;
 
 public interface OnNetworkResponseSuccess {
     void onSuccess(@NonNull final Response<DirectionsResponse> directionsResponse);
-
 }

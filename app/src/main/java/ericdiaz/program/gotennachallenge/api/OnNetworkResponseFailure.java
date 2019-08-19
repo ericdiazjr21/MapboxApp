@@ -4,5 +4,4 @@ import androidx.annotation.NonNull;
 
 public interface OnNetworkResponseFailure {
     void onFailure(@NonNull final Throwable throwable);
-
 }

@@ -9,6 +9,14 @@ import ericdiaz.program.gotennachallenge.api.OnNetworkResponseSuccess;
 import ericdiaz.program.gotennachallenge.model.Place;
 import io.reactivex.Single;
 
+/**
+ * A base ViewModel interface for communicating between repositories and views
+ *
+ * Created: 8/14/19
+ *
+ * @author Eric Diaz
+ */
+
 public interface BaseViewModel {
 
     Single<Place[]> getPlacesData();
