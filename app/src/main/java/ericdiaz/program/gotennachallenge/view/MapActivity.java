@@ -15,8 +15,8 @@ import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.Style;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import ericdiaz.program.gotennachallenge.R;
@@ -50,7 +50,7 @@ public class MapActivity extends AppCompatActivity implements PlacesViewHolder.O
     private BaseViewModel placesViewModel;
     private LocationUtils locationUtils;
     private MapUtils mapUtils;
-    private final List<DirectionsRoute> directionsRouteList = new ArrayList<>();
+    private final Map<Integer, DirectionsRoute> directionsRouteHashMap = new HashMap<>();
 
     //==============================================================================================
     // Lifecycle Methods
@@ -119,8 +119,39 @@ public class MapActivity extends AppCompatActivity implements PlacesViewHolder.O
     //==============================================================================================
 
     @Override
-    public void onItemViewClicked(int position) {
-        mapUtils.drawNavigationRoute(directionsRouteList.get(position));
+    public void onItemViewClicked(Place place) {
+        placesViewModel
+          .getDirectionsData(
+
+            MapUtils.getAccessKey(),
+
+            locationUtils.getUserLastKnownPoint(),
+
+            locationUtils.getDestinationPoint(place.getLongitude(), place.getLatitude()),
+
+            directionsResponse -> {
+
+                if (directionsRouteHashMap.containsKey(place.getId() - 1)) {
+
+                    if (directionsResponse.body() != null) {
+
+                        directionsRouteHashMap
+
+                          .replace(place.getId() - 1,
+
+                            directionsRouteHashMap.get(place.getId() - 1),
+
+                            directionsResponse.body().routes().get(0));
+                    }
+
+                } else {
+
+                    directionsRouteHashMap.put(place.getId() - 1, directionsResponse.body().routes().get(0));
+                }
+
+                mapUtils.drawNavigationRoute(Objects.requireNonNull(directionsRouteHashMap.get(place.getId() - 1)));
+            },
+            throwable -> Log.d(TAG, "initMap: " + throwable.toString()));
     }
 
     //==============================================================================================
@@ -136,9 +167,7 @@ public class MapActivity extends AppCompatActivity implements PlacesViewHolder.O
 
             mapUtils = new MapUtils(mapboxMap, styleBuilder);
 
-            mapUtils.addPersonIconToStyle(
-              Objects.requireNonNull(getDrawable(R.drawable.ic_person)),
-              locationUtils.getUserLastKnownPoint());
+            mapUtils.addPersonLayerToStyle(locationUtils.getUserLastKnownPoint());
 
             mapUtils.addPinIconToStyle(
               BitmapFactory.decodeResource(getResources(), R.drawable.mapbox_marker_icon_default));
@@ -167,13 +196,6 @@ public class MapActivity extends AppCompatActivity implements PlacesViewHolder.O
                             place.getLatitude());
 
                           mapUtils.addLocationPinLayerToStyle(place.getId());
-
-                          placesViewModel.getDirectionsData(
-                            MapUtils.getAccessKey(),
-                            locationUtils.getUserLastKnownPoint(),
-                            locationUtils.getDestinationPoint(place.getLongitude(), place.getLatitude()),
-                            directionsResponse -> directionsRouteList.add(directionsResponse.body().routes().get(0)),
-                            throwable -> Log.d(TAG, "initMap: " + throwable.toString()));
                       }
                   });
             });

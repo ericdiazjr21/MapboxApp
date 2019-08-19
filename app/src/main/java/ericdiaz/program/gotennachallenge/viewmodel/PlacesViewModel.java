@@ -103,8 +103,6 @@ public final class PlacesViewModel extends AndroidViewModel implements BaseViewM
 
     private void storePlacesInDatabase(Place[] places) {
         for (Place place : places) {
-            Log.d(TAG, "getPlacesData: " + place.getLongitude() + " " + place.getLatitude());
-
             placesDatabaseRepository.insertPlace(place);
         }
     }

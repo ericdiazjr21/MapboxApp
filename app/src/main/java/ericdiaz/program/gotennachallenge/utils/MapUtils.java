@@ -2,7 +2,6 @@ package ericdiaz.program.gotennachallenge.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 
 import androidx.annotation.NonNull;
 
@@ -80,22 +79,12 @@ public final class MapUtils {
         this.loadedStyle = loadedStyle;
     }
 
-    public void addPersonIconToStyle(@NonNull final Drawable drawable,
-                                     @NonNull final Point lastKnownPoint) {
+    public void addPersonLayerToStyle(@NonNull final Point lastKnownPoint) {
         styleBuilder.fromUri(Style.MAPBOX_STREETS)
-
-          .withImage(Constants.PERSON_ICON_ID, Objects.requireNonNull(drawable))
 
           .withSource(new GeoJsonSource(Constants.PERSON_SOURCE_ID, Feature.fromGeometry(lastKnownPoint)))
 
-          .withLayer(new SymbolLayer(Constants.PERSON_LAYER_ID, Constants.PERSON_SOURCE_ID)
-
-            .withProperties(
-              PropertyFactory.iconImage(Constants.PERSON_ICON_ID),
-              PropertyFactory.iconSize(2f),
-              PropertyFactory.iconAllowOverlap(false),
-              PropertyFactory.iconIgnorePlacement(true)
-            ));
+          .withLayer(new SymbolLayer(Constants.PERSON_LAYER_ID, Constants.PERSON_SOURCE_ID));
     }
 
     public void addPinIconToStyle(@NonNull final Bitmap pinImage) {
@@ -175,8 +164,6 @@ public final class MapUtils {
         private static final String ACCESS_KEY = "pk.eyJ1IjoiZXJpY2RpYXoiLCJhIjoiY2p6OThqZzJiMDRxaDNkcGo0Y3E4Z3M3ZyJ9.X9WoMdw49Am8iQSUdVWL4w";
 
         private static final String PIN_ICON = "pin-marker-icon";
-
-        private static final String PERSON_ICON_ID = "person_icon_id";
 
         private static final String PERSON_SOURCE_ID = "person_source_id";
 

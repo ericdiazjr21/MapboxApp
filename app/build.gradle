@@ -4,7 +4,7 @@ android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "ericdiaz.program.gotennachallenge"
-        minSdkVersion 22
+        minSdkVersion 24
         targetSdkVersion 28
     }
     compileOptions {

@@ -59,7 +59,7 @@ public class PlacesViewHolder extends RecyclerView.ViewHolder {
         placeDescriptionTextView.setText(place.getDescription());
 
         moreInfoTextView.setOnClickListener(v ->
-          onItemViewClickedListener.onItemViewClicked(place.getId() - 1));
+          onItemViewClickedListener.onItemViewClicked(place));
     }
 
     //==============================================================================================
@@ -67,6 +67,6 @@ public class PlacesViewHolder extends RecyclerView.ViewHolder {
     //==============================================================================================
 
     public interface OnItemViewClickedListener {
-        void onItemViewClicked(int position);
+        void onItemViewClicked(Place place);
     }
 }
