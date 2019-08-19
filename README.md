@@ -10,7 +10,7 @@
 ### Specifics 
 - This application was developed in Android Studio v 3.4.2.
 - Emulator API 24 or higher with Google Play Services enabled is needed for proper build.
-- Set Emulator longitude to 40.694817, and latitude to -73.987700 for best experience.
+- Set Emulator longitude to -73.987700, and latitude to 40.694817 for best experience.
 - Roughly 24 - 28 hours spent in development in total.
 - Application uses MVVM architecture 
 
