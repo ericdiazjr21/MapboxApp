@@ -1,4 +1,4 @@
-# goTenna Coding Challenge
+# Mapbox Test App
 ### Implemented Libraries 
 * RxJava
 * Retrofit
