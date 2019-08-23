@@ -27,6 +27,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Response;
 
 import static com.mapbox.core.constants.Constants.PRECISION_6;
@@ -48,6 +52,8 @@ public final class MapUtils {
     private final MapboxMap mapboxMap;
     private final Style.Builder styleBuilder;
     private final Map<Integer, DirectionsRoute> directionsRouteHashMap = new HashMap<>();
+    private List<Feature> directionsRouteFeatureList = new ArrayList<>();
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private Style loadedStyle;
 
     //==============================================================================================
@@ -71,14 +77,6 @@ public final class MapUtils {
     //==============================================================================================
     // Class Instance Methods
     //==============================================================================================
-
-    private String getLayerId(final int iD) {
-        return "layer-id" + ": " + iD;
-    }
-
-    private String getSourceId(final int iD) {
-        return "source-id" + ": " + iD;
-    }
 
     public void setLoadedStyle(@NonNull final Style loadedStyle) {
         this.loadedStyle = loadedStyle;
@@ -114,16 +112,14 @@ public final class MapUtils {
             Constants.PERSON_LAYER_ID);
     }
 
-    public void addLocationCoordinatesToStyle(final int iD,
-                                              final double longitude,
-                                              final double latitude) {
+    public void addLocationCoordinatesToStyle(final FeatureCollection latLngCollection) {
         loadedStyle.addSource(
 
-          new GeoJsonSource(getSourceId(iD), Feature.fromGeometry(Point.fromLngLat(longitude, latitude))));
+          new GeoJsonSource(Constants.LOCATION_SOURCE_ID, latLngCollection));
     }
 
-    public void addLocationPinLayerToStyle(int iD) {
-        final SymbolLayer symbolLayer = new SymbolLayer(getLayerId(iD), getSourceId(iD));
+    public void addLocationPinLayerToStyle() {
+        final SymbolLayer symbolLayer = new SymbolLayer(Constants.LOCATION_SOURCE_ID, Constants.LOCATION_SOURCE_ID);
 
         symbolLayer.withProperties(PropertyFactory.iconImage(Constants.PIN_ICON));
 
@@ -155,7 +151,6 @@ public final class MapUtils {
 
                     directionsResponse.body().routes().get(0));
             }
-
         } else {
 
             directionsRouteHashMap.put(position, directionsResponse.body().routes().get(0));
@@ -163,24 +158,35 @@ public final class MapUtils {
     }
 
     public void drawNavigationRoute(int position) {
+        compositeDisposable.add(Completable.fromAction(() -> {
 
-        final List<Feature> directionsRouteFeatureList = new ArrayList<>();
+            directionsRouteFeatureList.clear();
 
-        final LineString lineString = LineString
+            final LineString lineString = LineString
 
-          .fromPolyline(directionsRouteHashMap.get(position).geometry(), PRECISION_6);
+              .fromPolyline(directionsRouteHashMap.get(position).geometry(), PRECISION_6);
 
-        final List<Point> lineStringCoordinates = lineString.coordinates();
+            final List<Point> lineStringCoordinates = lineString.coordinates();
 
-        for (int i = 0; i < lineStringCoordinates.size(); i++) {
-            directionsRouteFeatureList.add(Feature.fromGeometry(LineString.fromLngLats(lineStringCoordinates)));
-        }
+            for (int i = 0; i < lineStringCoordinates.size(); i++) {
+                directionsRouteFeatureList.add(Feature.fromGeometry(LineString.fromLngLats(lineStringCoordinates)));
+            }
+        }).subscribeOn(Schedulers.computation())
 
-        GeoJsonSource source = loadedStyle.getSourceAs(Constants.DASHED_DIRECTIONS_LINE_LAYER_SOURCE_ID);
+          .observeOn(AndroidSchedulers.mainThread())
 
-        if (source != null) {
-            source.setGeoJson(FeatureCollection.fromFeatures(directionsRouteFeatureList));
-        }
+          .subscribe(() -> {
+
+              GeoJsonSource source = loadedStyle.getSourceAs(Constants.DASHED_DIRECTIONS_LINE_LAYER_SOURCE_ID);
+
+              if (source != null) {
+                  source.setGeoJson(FeatureCollection.fromFeatures(directionsRouteFeatureList));
+              }
+          }));
+    }
+
+    public void tearDown() {
+        compositeDisposable.dispose();
     }
 
     //==============================================================================================
@@ -196,6 +202,8 @@ public final class MapUtils {
         private static final String PERSON_SOURCE_ID = "person_source_id";
 
         private static final String PERSON_LAYER_ID = "person_layer_id";
+
+        private static final String LOCATION_SOURCE_ID = "location_layer_id";
 
         private static final String DASHED_DIRECTIONS_LINE_LAYER_ID = "dashed_directions_line_layer_id";
 

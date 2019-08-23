@@ -2,7 +2,6 @@ package ericdiaz.program.gotennachallenge.view;
 
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -10,9 +9,15 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.FeatureCollection;
+import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.Style;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import ericdiaz.program.gotennachallenge.R;
 import ericdiaz.program.gotennachallenge.model.Place;
@@ -22,8 +27,10 @@ import ericdiaz.program.gotennachallenge.view.recyclerview.PlacesAdapter;
 import ericdiaz.program.gotennachallenge.view.recyclerview.PlacesViewHolder;
 import ericdiaz.program.gotennachallenge.viewmodel.BaseViewModel;
 import ericdiaz.program.gotennachallenge.viewmodel.PlacesViewModel;
+import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
@@ -42,10 +49,10 @@ public class MapActivity extends AppCompatActivity implements PlacesViewHolder.O
 
     private static final String TAG = "MapActivity";
     private MapView mapView;
-    private Disposable disposable;
     private BaseViewModel placesViewModel;
     private LocationUtils locationUtils;
     private MapUtils mapUtils;
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     //==============================================================================================
     // Lifecycle Methods
@@ -100,7 +107,8 @@ public class MapActivity extends AppCompatActivity implements PlacesViewHolder.O
         super.onDestroy();
         mapView.onDestroy();
         locationUtils.tearDown();
-        disposable.dispose();
+        mapUtils.tearDown();
+        compositeDisposable.dispose();
     }
 
     @Override
@@ -126,12 +134,18 @@ public class MapActivity extends AppCompatActivity implements PlacesViewHolder.O
 
             locationUtils.getDestinationPoint(place.getLongitude(), place.getLatitude()),
 
-            directionsResponse -> {
+            directionsResponse ->
 
-                mapUtils.updateRouteMap(place.getId() - 1, directionsResponse);
+              compositeDisposable.add(Completable.fromAction(() ->
 
-                mapUtils.drawNavigationRoute(place.getId() - 1);
-            },
+                mapUtils.updateRouteMap(place.getId() - 1, directionsResponse))
+
+                .subscribeOn(Schedulers.computation())
+
+                .observeOn(AndroidSchedulers.mainThread())
+
+                .subscribe(() -> mapUtils.drawNavigationRoute(place.getId() - 1))),
+
             throwable -> Timber.d("initMap: %s", throwable.toString()));
     }
 
@@ -170,23 +184,15 @@ public class MapActivity extends AppCompatActivity implements PlacesViewHolder.O
                 mapUtils.setCameraPosition(locationUtils.getUserLastKnownLatLng());
 
                 //Initialize network call to places API
-                disposable = placesViewModel
+                compositeDisposable.add(placesViewModel
                   .getPlacesData()
                   .observeOn(AndroidSchedulers.mainThread())
                   .subscribe(places -> {
 
                       initRecyclerView(places);
 
-                      //Add each locations position to the map
-                      for (Place place : places) {
-                          mapUtils.addLocationCoordinatesToStyle(
-                            place.getId(),
-                            place.getLongitude(),
-                            place.getLatitude());
-
-                          mapUtils.addLocationPinLayerToStyle(place.getId());
-                      }
-                  });
+                      drawPlacesOnMap(places);
+                  }));
             });
         });
     }
@@ -201,6 +207,30 @@ public class MapActivity extends AppCompatActivity implements PlacesViewHolder.O
         placesRecyclerView.setAdapter(adapter);
 
         placesRecyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.HORIZONTAL, false));
+    }
+
+    private void drawPlacesOnMap(Place[] places) {
+        List<Feature> coordinatesList = new ArrayList<>();
+
+        compositeDisposable.add(Completable.fromAction(() -> {
+            for (Place place : places) {
+
+                coordinatesList.add(
+
+                  Feature.fromGeometry(
+
+                    Point.fromLngLat(place.getLongitude(), place.getLatitude())));
+            }
+        }).subscribeOn(Schedulers.computation())
+
+          .observeOn(AndroidSchedulers.mainThread())
+
+          .subscribe(() -> {
+
+              mapUtils.addLocationCoordinatesToStyle(FeatureCollection.fromFeatures(coordinatesList));
+
+              mapUtils.addLocationPinLayerToStyle();
+          }));
     }
 
 }

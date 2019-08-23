@@ -8,6 +8,8 @@ import androidx.lifecycle.AndroidViewModel;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.geojson.Point;
 
+import java.util.concurrent.Callable;
+
 import ericdiaz.program.gotennachallenge.data.api.interfaces.OnNetworkResponseFailure;
 import ericdiaz.program.gotennachallenge.data.api.interfaces.OnNetworkResponseSuccess;
 import ericdiaz.program.gotennachallenge.model.Place;
@@ -67,8 +69,8 @@ public final class PlacesViewModel extends AndroidViewModel implements BaseViewM
                   return places;
               });
         } else {
-            return Single.just(placesDatabaseRepository
-              .getAllPlaces()).subscribeOn(Schedulers.io());
+            return Single.fromCallable(placesDatabaseRepository::getAllPlaces)
+              .subscribeOn(Schedulers.io());
         }
     }
 
@@ -80,8 +82,11 @@ public final class PlacesViewModel extends AndroidViewModel implements BaseViewM
                                   @NonNull final OnNetworkResponseFailure responseFailure) {
         disposable = directionsRepository
           .getDirections(accessToken, origin, destination)
+
           .subscribe(mapboxDirectionsService -> mapboxDirectionsService
+
             .getDirections(accessToken, origin, destination)
+
             .enqueueCall(new Callback<DirectionsResponse>() {
                 @Override
                 public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
