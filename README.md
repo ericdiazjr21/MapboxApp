@@ -1,4 +1,4 @@
-# Mapbox Test App
+# Mapbox App
 ### Implemented Libraries 
 * RxJava
 * Retrofit
